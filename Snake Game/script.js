@@ -17,6 +17,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let dx = cellSize; // +20
     let dy = 0;
+    let intervalId;
+    let gameSpeed = 200;
+
+    function moveFood() {
+        let newX, newY;
+        do {
+            newX = Math.floor(Math.random() * (arenaSize / cellSize)) * cellSize;
+            newY = Math.floor(Math.random() * (arenaSize / cellSize)) * cellSize;
+        } while(snake.some(snakeCell => snakeCell.x === newX && snakeCell.y === newY));
+
+        food = {x: newX, y: newY};
+    }
 
     function updateSnake() {
         const newHead = {x: snake[0].x + dx, y: snake[0].y + dy};
@@ -25,6 +37,13 @@ document.addEventListener('DOMContentLoaded', function() {
         // check collision with food
         if(newHead.x === food.x && newHead.y === food.y) {
             score += 10;
+            moveFood();
+            
+            if(gameSpeed > 50) {
+                clearInterval(intervalId);
+                gameSpeed -= 10;
+                gameLoop();
+            }
         } else {
             snake.pop(); // remove tail
         }
@@ -72,14 +91,47 @@ document.addEventListener('DOMContentLoaded', function() {
         gameArena.appendChild(foodElement);
     }
 
+    function isGameOver() {
+        // snake collision check
+        for (let i = 1; i < snake.length; i++) {
+            if(snake[0].x === snake[i].x && snake[0].y === snake[i].y) {
+                return true;
+            }
+        }
+
+        // wall collision check
+        const hitLeftWall = snake[0].x < 0; // snake[0] -> head
+        const hitRightWall = snake[0].x > arenaSize - cellSize;
+        const hitTopWall = snake[0].y < 0;
+        const hitDownWall = snake[0].y > arenaSize - cellSize;
+        return hitDownWall || hitLeftWall || hitRightWall || hitTopWall;
+    }
+
+    function gameLoop() {
+        intervalId = setInterval(() => { // like loop, execute function in given interval
+            if(isGameOver()) {
+                clearInterval(intervalId);
+                gameStarted = false;
+                alert('Game Over '+'your score: '+score);
+                return;
+            }
+            updateSnake();
+            drawFoodAndSnake();
+            drawScoreBoard();
+        }, gameSpeed);
+    }
+
     function runGame() {
         if(!gameStarted) {
             gameStarted = true;
             document.addEventListener('keydown', changeDirection);
-            drawFoodAndSnake();
-            // gameLoop(); // TODO: implement game loop
-
+            gameLoop(); // TODO: implement game loop
         }
+    }
+
+    function drawScoreBoard() {
+        const scoreBoard = document.getElementById('score-board');
+        scoreBoard.textContent = `Score: ${score}`;
     }
 
     function initiateGame() {
