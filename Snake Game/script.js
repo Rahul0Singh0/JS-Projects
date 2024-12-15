@@ -100,10 +100,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // wall collision check
-        const hitLeftWall = snake[0].x < 0; // snake[0] -> head
-        const hitRightWall = snake[0].x > arenaSize - cellSize;
-        const hitTopWall = snake[0].y < 0;
-        const hitDownWall = snake[0].y > arenaSize - cellSize;
+        const hitLeftWall = snake[0].x <= 0; // snake[0] -> head
+        const hitRightWall = snake[0].x >= arenaSize - cellSize;
+        const hitTopWall = snake[0].y <= 0;
+        const hitDownWall = snake[0].y >= arenaSize - cellSize;
         return hitDownWall || hitLeftWall || hitRightWall || hitTopWall;
     }
 
@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if(!gameStarted) {
             gameStarted = true;
             document.addEventListener('keydown', changeDirection);
-            gameLoop(); // TODO: implement game loop
+            gameLoop();
         }
     }
 
