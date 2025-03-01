@@ -22,6 +22,14 @@ document.addEventListener('DOMContentLoaded', function() {
         ball.style.left = `${ballX}px`;
         ball.style.top = `${ballY}px`;
     
+        if(ballX < paddle.offsetLeft + paddle.offsetWidth && 
+            ballY > paddle.offsetTop && 
+            ballY - ball.offsetHeight < paddle.offsetTop + paddle.offsetHeight 
+        ) {
+            dx *= -1;
+        }
+        // collision of ball and paddle 
+
         // if(ballX > 700-20 || ballX <= 0) dx *= -1;
         // if(ballY > 400-20 || ballY <= 0) dy *= -1;
     
@@ -31,8 +39,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 1);
 
     let paddleY = 0;
-    let dPy = 5; // displacement for paddle in y-direction
+    let dPy = 10; // displacement for paddle in y-direction
     document.addEventListener("keydown", (event) => {
+        event.preventDefault(); // prevents the execution of the default event behaviour
         if(event.keyCode == 38 && paddleY > 0) {
             // up arrow
             paddleY += (-1)*dPy;
@@ -40,7 +49,6 @@ document.addEventListener('DOMContentLoaded', function() {
             // down arrow
             paddleY += dPy;
         }
-
         paddle.style.top = `${paddleY}px`;
     });
 
